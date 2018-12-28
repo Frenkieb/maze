@@ -7,11 +7,12 @@ export default class GameScene extends Phaser.Scene {
 		if (data.hasOwnProperty( 'mazeSize' )) {
 			this.mazeSize = data.mazeSize;
 		}  else {
+			// Default maze size.
 			this.mazeSize = 2;
 		}
 
-		if (this.mazeSize > 3 ) {
-			this.mazeSize = 3;
+		if (this.mazeSize > 8 ) {
+			this.mazeSize = 9;
 		}
 	}
 
@@ -24,8 +25,6 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	create() {
-		// this.mazeSize = 2;
-
 		this.start();
 	}
 
@@ -48,7 +47,7 @@ export default class GameScene extends Phaser.Scene {
 	}
 
 	placePlayer() {
-		this.player = new Player(this, 50, 48);
+		this.player = new Player(this, 50, 48, this.wall_group);
 		this.player.sprite.setScale(0.75,0.75);
 	}
 
@@ -99,7 +98,8 @@ export default class GameScene extends Phaser.Scene {
 	doorCollision(player, door) {
 		this.mazeSize += 1;
 
-		//this.start();
+		player.destroy();
+
 		this.scene.restart({mazeSize: this.mazeSize});
 	}
 

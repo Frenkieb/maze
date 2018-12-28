@@ -4,9 +4,11 @@
  * method when you're done with the player.
  */
 export default class Player {
-	constructor(scene, x, y) {
+	constructor(scene, x, y, wall_group) {
 		this.scene = scene;
+		this.wall_group = wall_group;
 		this.cursors = this.scene.input.keyboard.createCursorKeys();
+		this.move = 32;
 
 		// Create the animations we need from the player spritesheet
 		const anims = scene.anims;
@@ -50,17 +52,61 @@ export default class Player {
 		}
 
 		this.sprite = scene.physics.add.sprite(x, y, 'player');
+
+		this.currentX = x;
+		this.currentY = y;
+
+		this.left = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+		this.right = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+		this.up = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+		this.down = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
+	}
+
+	isThereAWall(x, y) {
+		// Check if there is a wall on this coordinate.
+		var result = false;
+		for (var element of this.wall_group.children.entries) {
+			var half_width = element.width / 2;
+			if ( element.x - half_width <= x && x <= element.x + half_width && element.y - half_width <= y && y <= element.y + half_width ) {
+				console.log(element);
+				result = true;
+				break;
+			}
+		};
+		return result;
 	}
 
 	update() {
-		const speed = 200;
+		if (Phaser.Input.Keyboard.JustDown(this.left)) 	{
+			var wall = this.isThereAWall(this.sprite.x - this.move, this.sprite.y);
+			if (!wall) {
+				this.sprite.setX(this.sprite.x - this.move);
+			}
+		} else if (Phaser.Input.Keyboard.JustDown(this.right)) 	{
+			var wall = this.isThereAWall(this.sprite.x + this.move, this.sprite.y);
+			if (!wall) {
+				this.sprite.setX(this.sprite.x + this.move);
+			}
+		} else if (Phaser.Input.Keyboard.JustDown(this.up)) 	{
+			var wall = this.isThereAWall(this.sprite.x, this.sprite.y - this.move);
+			if (!wall) {
+				this.sprite.setY(this.sprite.y - this.move);
+			}
+		} else if (Phaser.Input.Keyboard.JustDown(this.down)) 	{
+			var wall = this.isThereAWall(this.sprite.x, this.sprite.y + this.move);
+			if (!wall) {
+				this.sprite.setY(this.sprite.y + this.move);
+			}
+		} else {
+			this.sprite.anims.play('player_idle', true);
+		}
 
+		/*const speed = 200;
 		// Stop any previous movement from the last frame.
 		this.sprite.body.setVelocity(0);
 
 		if (this.cursors.left.isDown) {
 			this.sprite.body.setVelocityX(-speed);
-			//this.sprite.setX(this.sprite.x - 32);
 			this.sprite.anims.play('player_left', true);
 		} else if (this.cursors.right.isDown) {
 			this.sprite.body.setVelocityX(speed);
@@ -76,7 +122,7 @@ export default class Player {
 		}
 
 		// Normalize and scale the velocity so that player can't move faster along a diagonal
-		this.sprite.body.velocity.normalize().scale(speed);
+		this.sprite.body.velocity.normalize().scale(speed);*/
 	}
 
 	destroy() {
