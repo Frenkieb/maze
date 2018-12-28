@@ -53,9 +53,6 @@ export default class Player {
 
 		this.sprite = scene.physics.add.sprite(x, y, 'player');
 
-		this.currentX = x;
-		this.currentY = y;
-
 		this.left = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
 		this.right = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 		this.up = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -68,7 +65,6 @@ export default class Player {
 		for (var element of this.wall_group.children.entries) {
 			var half_width = element.width / 2;
 			if ( element.x - half_width <= x && x <= element.x + half_width && element.y - half_width <= y && y <= element.y + half_width ) {
-				console.log(element);
 				result = true;
 				break;
 			}
@@ -98,7 +94,9 @@ export default class Player {
 				this.sprite.setY(this.sprite.y + this.move);
 			}
 		} else {
-			this.sprite.anims.play('player_idle', true);
+			if (typeof this.sprite.anims != 'undefined') {
+				this.sprite.anims.play('player_idle', true);
+			}
 		}
 
 		/*const speed = 200;

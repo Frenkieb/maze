@@ -3,7 +3,7 @@ import GameScene from './game-scene.js';
 const config = {
 	type: Phaser.AUTO,
 	width: 800,
-	height: 600,
+	height: 800,
 	parent: 'game-container',
 	pixelArt: true,
 	scene: [GameScene],
